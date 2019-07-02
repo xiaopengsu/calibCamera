@@ -1,0 +1,57 @@
+this creates a yaml or xml list of files from the command line args
+创建图片路径和列表
+
+example:
+./myImageListCreater ../data/images_list.xml ../images/*.jpg
+
+explain:
+
+./myImageListCreater   运行程序
+../data/images_list.xml  生成的列表路径与名称
+../images/*.jpg  图片存放路径极图片个式
+
+
+calibration.cpp
+// 玻璃小
+./myCalibCamera -w=11 -h=8 -o=../data/camera.yml -oe -su ../data/image_list.xml
+// 亚克力大
+ ./myCalibCamera -w=6 -h=7 -o=../data/camera.yml -oe -su ../data/image_list.xml
+
+
+undistortRectifyMap.cpp
+图像批量去畸变  参考 https://blog.csdn.net/KYJL888/article/details/81043133
+ ./myUndisRectifyMap  -ints=../data/camera.yml ../data/image_list.xml ../undistImage/;路径与参数
+
+
+
+calibration.cpp
+摄像机标定
+其他说明
+./myCalibCamera -w=6 -h=7 -o=../data/camera.yml -oe -su ../data/image_list.xml -p=1
+-p=1为 固定图像主点为中心        "     [-p]               # fix the principal point at the center\n"
+
+./myCalibCamera -w=6 -h=7 -n=15 -o=../data/camera.yml -oe -su ../data/image_list.xml -zt=1
+-zt=1 为 切向畸变为00  p1 p2  "     [-zt]                    # assume zero tangential distortion\n"
+
+./myCalibCamera -w=6 -h=7 -n=15 -o=../data/camera.yml -oe -su ../data/image_list.xml -zt=1 -a=1.5
+-a=1.5 为固定焦距比例  "     [-a=<aspectRatio>]      # fix aspect ratio (fx/fy)\n"
+
+
+
+./myCalibCamera -w=6 -h=7 -n=15 -o=../data/camera.yml -oe -su=../data ../data/image_list.xml
+
+ -n 大于3是不起作用     "     [-n=<number_of_frames>]  # the number of frames to use for calibration\n"
+-su=../data  不起作用
+-su=true 不起作用
+-su=false 不起作用
+
+
+//    double rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix,
+//                    distCoeffs, rvecs, tvecs, flags|CALIB_FIX_K4|CALIB_FIX_K5);
+//                    ///*|CALIB_FIX_K3*/|CALIB_FIX_K4|CALIB_FIX_K5);
+    
+        double rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix,
+                    distCoeffs, rvecs, tvecs, flags|CV_CALIB_FIX_K3|CALIB_FIX_K4|CALIB_FIX_K5);
+                    ///*|CALIB_FIX_K3*/|CALIB_FIX_K4|CALIB_FIX_K5);
+k1 k2 p1 p2  k3  ----k3=0
+
